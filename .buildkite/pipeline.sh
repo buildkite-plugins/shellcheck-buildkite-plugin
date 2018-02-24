@@ -20,4 +20,12 @@ steps:
     plugins:
       docker-compose#v1.2.1:
         run: tests
+
+  - label: run shellcheck
+    plugins:
+      ${BUILDKITE_REPO}#${commit}:
+        files:
+          - hooks/*
+          - buildkite/*.sh
+
 YAML
