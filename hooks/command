@@ -19,12 +19,14 @@ function plugin_read_list() {
   fi
 }
 
+IFS=$'\n\t'
 files=()
 
-for pattern in $(plugin_read_list FILES) ; do
-  while IFS=$'\n' read -r line; do
-    files+=("$line")
-  done < <(ls -1 "$pattern" 2>/dev/null)
+# Evaluate all the globs and return the files that exist
+for file in $(plugin_read_list FILES) ; do
+  if [[ -e $file ]] ; then
+    files+=("$file")
+  fi
 done
 
 if [[ -z ${files:-} ]] ; then
@@ -32,4 +34,7 @@ if [[ -z ${files:-} ]] ; then
   exit 1
 fi
 
-docker run --rm -v "$PWD:/mnt" koalaman/shellcheck "${files[@]}"
+echo "+++ Running shellcheck on ${#files[@]} files"
+if docker run --rm -v "$PWD:/mnt" koalaman/shellcheck "${files[@]}" ; then
+  echo "Files are ok ✅"
+fi

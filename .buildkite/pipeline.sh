@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -eu
 
 # If you build HEAD the pipeline.sh step, because it runs first, won't yet
@@ -22,7 +21,7 @@ steps:
 
   - label: run shellcheck
     plugins:
-      ${BUILDKITE_REPO}#${commit}:
+      shellcheck#${commit}:
         files:
           - hooks/*
           - buildkite/*.sh
