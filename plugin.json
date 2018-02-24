@@ -1,0 +1,7 @@
+{
+  "name": "Shellcheck",
+  "description": "Run shellcheck over your shell scripts",
+  "author": "@lox",
+  "public": true,
+  "requirements": ["bash", "docker"]
+}

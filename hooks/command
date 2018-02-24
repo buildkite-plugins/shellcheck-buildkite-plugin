@@ -1,0 +1,35 @@
+#!/bin/bash
+set -eu -o pipefail
+
+# Reads either a value or a list from plugin config
+function plugin_read_list() {
+  local prefix="BUILDKITE_PLUGIN_SHELLCHECK_$1"
+  local parameter="${prefix}_0"
+
+  if [[ -n "${!parameter:-}" ]]; then
+    local i=0
+    local parameter="${prefix}_${i}"
+    while [[ -n "${!parameter:-}" ]]; do
+      echo "${!parameter}"
+      i=$((i+1))
+      parameter="${prefix}_${i}"
+    done
+  elif [[ -n "${!prefix:-}" ]]; then
+    echo "${!prefix}"
+  fi
+}
+
+files=()
+
+for pattern in $(plugin_read_list FILES) ; do
+  while IFS=$'\n' read -r line; do
+    files+=("$line")
+  done < <(ls -1 "$pattern" 2>/dev/null)
+done
+
+if [[ -z ${files:-} ]] ; then
+  echo "No files found to shellcheck"
+  exit 1
+fi
+
+docker run --rm -v "$PWD:/mnt" koalaman/shellcheck "${files[@]}"
