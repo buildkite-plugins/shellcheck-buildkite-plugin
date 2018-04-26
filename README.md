@@ -9,7 +9,7 @@ This will check all shellscripts with shellcheck.
 ```yml
 steps:
   - plugins:
-      shellcheck#v1.0.0:
+      shellcheck#v1.0.1:
         files: scripts/*.sh
 ```
 
