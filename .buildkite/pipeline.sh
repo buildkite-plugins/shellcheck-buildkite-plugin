@@ -26,4 +26,8 @@ steps:
           - hooks/*
           - buildkite/*.sh
 
+  - label: ":sparkles: lint"
+    plugins:
+      plugin-linter#v1.0.0:
+        name: shellcheck
 YAML

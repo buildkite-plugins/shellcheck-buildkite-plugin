@@ -1,0 +1,13 @@
+name: Shellcheck
+description: Run shellcheck over your shell scripts
+author: https://github.com/lox
+requirements:
+  - bash
+  - docker
+configuration:
+  properties:
+    files:
+      type: [string, array]
+      minItems: 1
+  required:
+    - files
