@@ -37,4 +37,6 @@ fi
 echo "+++ Running shellcheck on ${#files[@]} files"
 if docker run --rm -v "$PWD:/mnt" koalaman/shellcheck "${files[@]}" ; then
   echo "Files are ok ✅"
+else
+  exit 1
 fi

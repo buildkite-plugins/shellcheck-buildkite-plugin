@@ -33,3 +33,17 @@ load '/usr/local/lib/bats/load.bash'
 
   unstub docker
 }
+
+@test "Shellcheck failure" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="tests/testdata/subdir/llamas.sh"
+
+  stub docker \
+    "run --rm -v $PWD:/mnt koalaman/shellcheck tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ space.sh' : echo shellcheck failed; exit 1"
+
+  run "$PWD/hooks/command"
+
+  assert_failure
+  assert_output --partial "shellcheck failed"
+
+  unstub docker
+}
