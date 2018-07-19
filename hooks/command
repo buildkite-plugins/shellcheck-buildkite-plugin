@@ -21,6 +21,7 @@ function plugin_read_list() {
 
 IFS=$'\n\t'
 files=()
+options=()
 
 # Evaluate all the globs and return the files that exist
 for file in $(plugin_read_list FILES) ; do
@@ -29,13 +30,18 @@ for file in $(plugin_read_list FILES) ; do
   fi
 done
 
+# Read in the options to pass to shellcheck
+for option in $(plugin_read_list OPTIONS) ; do
+  options+=("$option")
+done
+
 if [[ -z ${files:-} ]] ; then
   echo "No files found to shellcheck"
   exit 1
 fi
 
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${files[@]}" ; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${options[@]}" "${files[@]}" ; then
   echo "Files are ok ✅"
 else
   exit 1
