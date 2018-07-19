@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux -o pipefail
+set -eu -o pipefail
 
 # Reads either a value or a list from plugin config
 function plugin_read_list() {
