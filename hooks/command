@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu -o pipefail
+set -eux -o pipefail
 
 # Reads either a value or a list from plugin config
 function plugin_read_list() {
@@ -41,7 +41,7 @@ if [[ -z ${files:-} ]] ; then
 fi
 
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${options[@]}" "${files[@]}" ; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${options[@]+${options[@]}}" "${files[@]}" ; then
   echo "Files are ok ✅"
 else
   exit 1
