@@ -34,8 +34,11 @@ if [[ -z ${files:-} ]] ; then
   exit 1
 fi
 
+# Read in the options to pass to shellcheck
+mapfile -t options<<<"$(plugin_read_list OPTIONS)"
+
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${files[@]}" ; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" koalaman/shellcheck "${options[@]+${options[@]}}" "${files[@]}" ; then
   echo "Files are ok ✅"
 else
   exit 1

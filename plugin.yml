@@ -9,5 +9,8 @@ configuration:
     files:
       type: [string, array]
       minItems: 1
+    options:
+      type: [string, array]
+      minItems: 1
   required:
     - files
