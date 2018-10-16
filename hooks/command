@@ -34,7 +34,10 @@ if [[ -z ${files:-} ]] ; then
   exit 1
 fi
 
-# Read in the options to pass to shellcheck
+# Read in the options to pass to shellcheck.  Ask for color by default
+# for pretty online log display (but someone can override this with an
+# explicit `options: "--color=never"`)
+options=("--color=always")
 while IFS=$'\n' read -r option ; do
   options+=("$option")
 done < <(plugin_read_list OPTIONS)
