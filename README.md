@@ -13,15 +13,21 @@ steps:
           files: scripts/*.sh
 ```
 
-## Options
+## Configuration
 
-### `files`
+### Required
 
-The files (or globs) to run shellcheck on
+### `files` (string or array of strings)
 
-### `options`
+The files (or globs) to run shellcheck on.
 
-Any options to pass to shellcheck
+### Optional
+
+### `options` (string or array of strings)
+
+Command line options to pass to shellcheck.
+
+Default: `"--color=always"`
 
 ## License
 
