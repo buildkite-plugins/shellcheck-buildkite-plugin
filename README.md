@@ -19,6 +19,10 @@ steps:
 
 The files (or globs) to run shellcheck on
 
+### `options`
+
+Any options to pass to shellcheck
+
 ## License
 
 MIT (see [LICENSE](LICENSE))
