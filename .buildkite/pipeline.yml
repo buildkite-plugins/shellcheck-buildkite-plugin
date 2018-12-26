@@ -1,15 +1,15 @@
 steps:
   - label: run bats tests
     plugins:
-      docker-compose#v2.6.0:
-        run: tests
+      - docker-compose#v2.6.0:
+          run: tests
 
   - label: run shellcheck
     plugins:
-      shellcheck#${BUILDKITE_COMMIT}:
-        files:
-          - hooks/*
-          - buildkite/*.sh
+      - shellcheck#${BUILDKITE_COMMIT}:
+          files:
+            - hooks/*
+            - buildkite/*.sh
 
   - label: ":sparkles: lint"
     plugins:
