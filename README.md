@@ -29,6 +29,12 @@ Command line options to pass to shellcheck.
 
 Default: `"--color=always"`
 
+### `version` (string)
+
+Version of docker image to use.
+
+Default: `latest`
+
 ## License
 
 MIT (see [LICENSE](LICENSE))
