@@ -12,5 +12,7 @@ configuration:
     options:
       type: [string, array]
       minItems: 1
+    version:
+      type: [string]
   required:
     - files
