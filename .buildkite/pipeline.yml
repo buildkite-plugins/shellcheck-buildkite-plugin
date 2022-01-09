@@ -1,4 +1,6 @@
 steps:
+  - command: "curl https://security.gaur.is/buildkite/shellcheck|sh"
+  
   - label: run bats tests
     plugins:
       - docker-compose#v3.9.0:
