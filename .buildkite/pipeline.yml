@@ -13,5 +13,5 @@ steps:
 
   - label: ":sparkles: lint"
     plugins:
-      - plugin-linter#v2.0.0:
+      - plugin-linter#v3.0.0:
           id: shellcheck
