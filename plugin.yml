@@ -6,6 +6,10 @@ requirements:
   - docker
 configuration:
   properties:
+    globstar:
+      type: boolean
+    extglob:
+      type: boolean
     files:
       type: [string, array]
       minItems: 1

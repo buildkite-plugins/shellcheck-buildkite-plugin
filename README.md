@@ -23,6 +23,22 @@ The files (or globs) to run shellcheck on.
 
 ### Optional
 
+### `extglob` (boolean)
+
+Enable using [extended glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html), e.g. `*.+(sh|bash)`
+
+Note: _requires at least Bash 4 on the Buildkite Agent_
+
+Default: `false`
+
+### `extglob` (boolean)
+
+Enable using recursive globbing, e.g. `**/*.sh`
+
+Note: _requires at least Bash 4 on the Buildkite Agent_
+
+Default: `false`
+
 ### `options` (string or array of strings)
 
 Command line options to pass to shellcheck.

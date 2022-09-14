@@ -1,15 +1,48 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -eu -o pipefail
 
-if [[ ${BASH_VERSINFO[0]} -le 3 ]]; then
-  echo "unable to continue, Bash 4 or newer required" 1>&2
+fail() {
+  echo "ERROR: ${*}" 1>&2
   exit 1
-fi
+}
 
-shopt -s globstar extglob
+# checks if a corresponding buildkite variable is set,
+# and then if the shell is new enough to support that
+# particular shopt.
+set_shopt() {
+  local option="${1}"
+  local varname
+  varname="$(tr '[:lower:]' '[:upper:]' <<< "BUILDKITE_PLUGIN_SHELLCHECK_${option}")"
+
+  if [[ -n ${!varname:-} ]]; then
+    bash_version_check "${option}"
+    shopt -s "${option}"
+  fi
+}
+
+bash_version_check() {
+  local option="${1}"
+  local required
+
+  case "${option}" in
+    autocd | checkjobs | compat32 | compat40 | compat41 | compat42 | compat43 | complete_fullquote | direxpand | dirspell | globasciiranges | globstar | inherit_errexit | lastpipe)
+      required="4"
+      ;;
+    assoc_expand_once | compat44 | localvar_inherit | localvar_unset | progcomp_alias)
+      required="5"
+      ;;
+    *)
+      required="3"
+      ;;
+  esac
+
+  if [[ ${BASH_VERSINFO[0]} -lt ${required} ]]; then
+    fail "shopt '${option}' requires Bash ${required} or newer"
+  fi
+}
 
 # Reads either a value or a list from plugin config
-function plugin_read_list() {
+plugin_read_list() {
   local prefix="BUILDKITE_PLUGIN_SHELLCHECK_$1"
   local parameter="${prefix}_0"
 
@@ -25,6 +58,9 @@ function plugin_read_list() {
     echo "${!prefix}"
   fi
 }
+
+set_shopt globstar
+set_shopt extglob
 
 IFS=$'\n\t'
 files=()
