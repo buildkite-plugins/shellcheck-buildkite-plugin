@@ -36,6 +36,21 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
+@test "Shellcheck multiple files with starglob" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="**/*.sh"
+
+  stub docker \
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always \"tests/testdata/recursive/subdir/stub.sh tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh\"' : echo testing stub.sh test.sh llamas.sh shell with space.sh"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "Running shellcheck on 4 files"
+  assert_output --partial "testing stub.sh test.sh llamas.sh shell with space.sh"
+
+  unstub docker
+}
+
 @test "Shellcheck a single file with single option" {
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="tests/testdata/subdir/llamas.sh"
   export BUILDKITE_PLUGIN_SHELLCHECK_OPTIONS_0="--exclude=SC2086"

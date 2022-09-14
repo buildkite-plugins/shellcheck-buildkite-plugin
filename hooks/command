@@ -1,20 +1,27 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eu -o pipefail
+
+if [[ ${BASH_VERSINFO[0]} -le 3 ]]; then
+  echo "unable to continue, Bash 4 or newer required" 1>&2
+  exit 1
+fi
+
+shopt -s globstar extglob
 
 # Reads either a value or a list from plugin config
 function plugin_read_list() {
   local prefix="BUILDKITE_PLUGIN_SHELLCHECK_$1"
   local parameter="${prefix}_0"
 
-  if [[ -n "${!parameter:-}" ]]; then
+  if [[ -n ${!parameter:-} ]]; then
     local i=0
     local parameter="${prefix}_${i}"
-    while [[ -n "${!parameter:-}" ]]; do
+    while [[ -n ${!parameter:-} ]]; do
       echo "${!parameter}"
-      i=$((i+1))
+      i=$((i + 1))
       parameter="${prefix}_${i}"
     done
-  elif [[ -n "${!prefix:-}" ]]; then
+  elif [[ -n ${!prefix:-} ]]; then
     echo "${!prefix}"
   fi
 }
@@ -23,13 +30,13 @@ IFS=$'\n\t'
 files=()
 
 # Evaluate all the globs and return the files that exist
-for file in $(plugin_read_list FILES) ; do
-  if [[ -e $file ]] ; then
+for file in $(plugin_read_list FILES); do
+  if [[ -e $file ]]; then
     files+=("$file")
   fi
 done
 
-if [[ -z ${files:-} ]] ; then
+if [[ -z ${files:-} ]]; then
   echo "No files found to shellcheck"
   exit 1
 fi
@@ -38,14 +45,14 @@ fi
 # for pretty online log display (but someone can override this with an
 # explicit `options: "--color=never"`)
 options=("--color=always")
-while IFS=$'\n' read -r option ; do
+while IFS=$'\n' read -r option; do
   options+=("$option")
 done < <(plugin_read_list OPTIONS)
 
 BUILDKITE_PLUGIN_SHELLCHECK_VERSION="${BUILDKITE_PLUGIN_SHELLCHECK_VERSION:-stable}"
 
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "koalaman/shellcheck:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}" ; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "koalaman/shellcheck:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}"; then
   echo "Files are ok ✅"
 else
   exit 1
