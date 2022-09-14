@@ -8,8 +8,10 @@ configuration:
   properties:
     globstar:
       type: boolean
+      default: false
     extglob:
       type: boolean
+      default: false
     files:
       type: [string, array]
       minItems: 1

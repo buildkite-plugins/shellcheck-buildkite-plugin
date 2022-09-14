@@ -37,7 +37,7 @@ load '/usr/local/lib/bats/load.bash'
 }
 
 @test "Shellcheck multiple files using recursive globbing" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=1
+  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=true
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
   stub docker \
@@ -53,7 +53,7 @@ load '/usr/local/lib/bats/load.bash'
 }
 
 @test "Recursive globbing fails if starglob is disabled" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=0
+  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=false
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
   run "$PWD/hooks/command"
@@ -63,7 +63,7 @@ load '/usr/local/lib/bats/load.bash'
 }
 
 @test "Shellcheck multiple files using extended globbing" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=1
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=true
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
   stub docker \
@@ -79,7 +79,7 @@ load '/usr/local/lib/bats/load.bash'
 }
 
 @test "Extended globbing fails if extended globbing is disabled" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=0
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=false
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
   run "$PWD/hooks/command"
