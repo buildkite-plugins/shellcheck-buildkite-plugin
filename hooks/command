@@ -25,15 +25,9 @@ bash_version_check() {
   local required
 
   case "${option}" in
-    autocd | checkjobs | compat32 | compat40 | compat41 | compat42 | compat43 | complete_fullquote | direxpand | dirspell | globasciiranges | globstar | inherit_errexit | lastpipe)
-      required="4"
-      ;;
-    assoc_expand_once | compat44 | localvar_inherit | localvar_unset | progcomp_alias)
-      required="5"
-      ;;
-    *)
-      required="3"
-      ;;
+    globstar) required="4" ;;
+    extglob) required="3" ;;
+    *)  fail "attempted to set unknown shopt '${option}'" ;;
   esac
 
   if [[ ${BASH_VERSINFO[0]} -lt ${required} ]]; then
