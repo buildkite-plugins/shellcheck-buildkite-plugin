@@ -36,7 +36,7 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Shellcheck multiple files with starglob" {
+@test "Shellcheck multiple files using recursive globbing" {
   export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=1
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
@@ -52,7 +52,17 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Shellcheck multiple files with extglob" {
+@test "Recursive globbing fails if starglob is disabled" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=0
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
+
+  run "$PWD/hooks/command"
+
+  assert_failure
+  assert_output --partial "No files found to shellcheck"
+}
+
+@test "Shellcheck multiple files using extended globbing" {
   export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=1
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
@@ -66,6 +76,16 @@ load '/usr/local/lib/bats/load.bash'
   assert_output --partial "testing llamas.sh shell with space.sh stub.bash"
 
   unstub docker
+}
+
+@test "Extended globbing fails if extended globbing is disabled" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=0
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
+
+  run "$PWD/hooks/command"
+
+  assert_failure
+  assert_output --partial "No files found to shellcheck"
 }
 
 @test "Shellcheck a single file with single option" {

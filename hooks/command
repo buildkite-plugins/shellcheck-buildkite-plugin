@@ -14,7 +14,7 @@ set_shopt() {
   local varname
   varname="$(tr '[:lower:]' '[:upper:]' <<< "BUILDKITE_PLUGIN_SHELLCHECK_${option}")"
 
-  if [[ -n ${!varname:-} ]]; then
+  if [[ ${!varname:-0} -eq 1 ]]; then
     bash_version_check "${option}"
     shopt -s "${option}"
   fi
