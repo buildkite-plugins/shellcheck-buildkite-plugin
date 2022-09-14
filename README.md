@@ -31,7 +31,7 @@ Note: _requires at least Bash 4 on the Buildkite Agent_
 
 Default: `false`
 
-### `extglob` (boolean)
+### `globstar` (boolean)
 
 Enable using recursive globbing, e.g. `**/*.sh`
 
