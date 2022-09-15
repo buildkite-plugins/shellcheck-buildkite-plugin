@@ -36,7 +36,7 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Shellcheck multiple files using recursive globbing" {
+@test "Shellcheck multiple files using recursive globbing enabled with '1'" {
   export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=true
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
@@ -52,18 +52,8 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Recursive globbing fails if starglob is disabled" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=false
-  export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
-
-  run "$PWD/hooks/command"
-
-  assert_failure
-  assert_output --partial "No files found to shellcheck"
-}
-
-@test "Shellcheck multiple files using extended globbing" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=true
+@test "Shellcheck multiple files using extended globbing enabled with 'true'" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=1
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
   stub docker \
@@ -78,8 +68,28 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Extended globbing fails if extended globbing is disabled" {
-  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=false
+@test "Recursive globbing fails if starglob is disabled with 'false'" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=false
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
+
+  run "$PWD/hooks/command"
+
+  assert_failure
+  assert_output --partial "No files found to shellcheck"
+}
+
+@test "Extended globbing fails if extended globbing is disabled with 'FALSE'" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=FALSE
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
+
+  run "$PWD/hooks/command"
+
+  assert_failure
+  assert_output --partial "No files found to shellcheck"
+}
+
+@test "Extended globbing fails if extended globbing is disabled with '0'" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=0
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
   run "$PWD/hooks/command"

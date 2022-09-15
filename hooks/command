@@ -11,10 +11,18 @@ fail() {
 # particular shopt.
 set_shopt() {
   local option="${1}"
+
+  # `tr` is used instead of Bash 4's ^^ (uppercase) and ,, (lowercase)
+  # because evaluating which version of Bash the agent is running only
+  # happens when setting `shopt` values; it leads to clunkier, more
+  # verbose assignments but it should ensure wider compatability in situations
+  # where no `shopt` values need to be set at all.
   local varname
   varname="$(tr '[:lower:]' '[:upper:]' <<< "BUILDKITE_PLUGIN_SHELLCHECK_${option}")"
+  local value
+  value="$(tr '[:upper:]' '[:lower:]' <<< "${!varname:-false}")"
 
-  if [[ ${!varname:-false} == true ]]; then
+  if [[ ${value} =~ ^(true|1)$ ]]; then
     bash_version_check "${option}"
     shopt -s "${option}"
   fi
