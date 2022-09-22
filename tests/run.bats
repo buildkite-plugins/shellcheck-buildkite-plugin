@@ -36,7 +36,7 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Shellcheck multiple files using recursive globbing enabled with '1'" {
+@test "Shellcheck multiple files using recursive globbing enabled with 'true'" {
   export BUILDKITE_PLUGIN_SHELLCHECK_GLOBSTAR=true
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
