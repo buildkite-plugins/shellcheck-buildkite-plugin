@@ -27,8 +27,8 @@ set_shopt() {
 
   # macOS is the last major platform still using Bash 3, and `shopt -q` is
   # broken on macOS. So we have to mute `shopt` the old-fashioned way
-  # and redirect output to /dev/null. Since the list of options's we'll attempt
-  # to set is so constrained, we can use a small helper fuction to look up
+  # and redirect output to /dev/null. Since the list of options that we'll
+  # attempt to set is so constrained, we can use a small helper fuction to look up
   # which version of bash introduced a given the shopts in our error handling.
   if ! shopt -s "${option}" &> /dev/null; then
     fail "failed to set shopt '${option}: $(bash_version_lookup "${option}")"
