@@ -52,7 +52,7 @@ load '/usr/local/lib/bats/load.bash'
   unstub docker
 }
 
-@test "Shellcheck multiple files using extended globbing enabled with 'true'" {
+@test "Shellcheck multiple files using extended globbing enabled with '1'" {
   export BUILDKITE_PLUGIN_SHELLCHECK_EXTGLOB=1
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
