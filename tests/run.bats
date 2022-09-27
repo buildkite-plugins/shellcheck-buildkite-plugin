@@ -15,6 +15,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing test.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -25,13 +26,14 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES_2="missing"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always \"tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh\"' : echo testing test.sh llamas.sh shell with space.sh"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ a\ space.sh : echo testing test.sh llamas.sh shell with space.sh"
 
   run "$PWD/hooks/command"
 
   assert_success
   assert_output --partial "Running shellcheck on 3 files"
   assert_output --partial "testing test.sh llamas.sh shell with space.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -48,6 +50,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing llamas.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -66,6 +69,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing llamas.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -79,13 +83,14 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_OPTIONS_2="-x"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always --exclude=SC2086 --format=gcc -x \"tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh\"' : echo testing test.sh llamas.sh shell with space.sh"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always --exclude=SC2086 --format=gcc -x tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ a\ space.sh : echo testing test.sh llamas.sh shell with space.sh"
 
   run "$PWD/hooks/command"
 
   assert_success
   assert_output --partial "Running shellcheck on 3 files"
   assert_output --partial "testing test.sh llamas.sh shell with space.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -94,13 +99,14 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="tests/testdata/subdir/llamas.sh"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ space.sh' : echo shellcheck failed; exit 1"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/subdir/llamas.sh : echo shellcheck failed; exit 1"
 
   run "$PWD/hooks/command"
 
-  assert_failure
+  assert_failure 1
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "shellcheck failed"
+  refute_output --partial "Files are ok"
 
   unstub docker
 }
