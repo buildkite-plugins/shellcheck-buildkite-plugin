@@ -15,6 +15,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing test.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -32,6 +33,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 3 files"
   assert_output --partial "testing test.sh llamas.sh shell with space.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -48,6 +50,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing llamas.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -66,6 +69,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "testing llamas.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -86,6 +90,7 @@ load '/usr/local/lib/bats/load.bash'
   assert_success
   assert_output --partial "Running shellcheck on 3 files"
   assert_output --partial "testing test.sh llamas.sh shell with space.sh"
+  assert_output --partial "Files are ok"
 
   unstub docker
 }
@@ -98,9 +103,10 @@ load '/usr/local/lib/bats/load.bash'
 
   run "$PWD/hooks/command"
 
-  assert_failure
+  assert_failure 1
   assert_output --partial "Running shellcheck on 1 files"
   assert_output --partial "shellcheck failed"
+  refute_output --partial "Files are ok"
 
   unstub docker
 }
