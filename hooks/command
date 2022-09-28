@@ -12,7 +12,7 @@ boolean_check() (
   local value="${1}"
   shopt -s nocasematch
 
-  # return immediately (and successfully) unless the value is explicitly set to true
+  # return immediately (and successfully) if the value is explicitly set to true
   if [[ ${value} =~ ^(true|1)$ ]]; then
     return 0
   fi
