@@ -41,7 +41,7 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.sh"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always \"tests/testdata/recursive/subdir/stub.sh tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh\"' : echo testing stub.sh test.sh llamas.sh shell with space.sh"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/recursive/subdir/stub.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ a\ space.sh tests/testdata/test.sh : echo testing stub.sh test.sh llamas.sh shell with space.sh"
 
   run "$PWD/hooks/command"
 
@@ -57,7 +57,7 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="tests/testdata/subdir/*.+(sh|bash)"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always \"tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh tests/testdata/subdir/stub.bash\"' : echo testing llamas.sh shell with space.sh stub.bash"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ a\ space.sh tests/testdata/subdir/stub.bash : echo testing llamas.sh shell with space.sh stub.bash"
 
   run "$PWD/hooks/command"
 
@@ -104,7 +104,7 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_PLUGIN_SHELLCHECK_FILES="**/*.+(sh|bash)"
 
   stub docker \
-    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always \"tests/testdata/recursive/subdir/stub.bash tests/testdata/subdir/stub.bash tests/testdata/recursive/subdir/stub.sh tests/testdata/test.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell with space.sh\"' : echo testing stub.sh test.sh llamas.sh shell with space.sh"
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/recursive/subdir/stub.bash tests/testdata/recursive/subdir/stub.sh tests/testdata/subdir/llamas.sh tests/testdata/subdir/shell\ with\ a\ space.sh tests/testdata/subdir/stub.bash tests/testdata/test.sh : echo testing stub.sh test.sh llamas.sh shell with space.sh"
 
   run "$PWD/hooks/command"
 
