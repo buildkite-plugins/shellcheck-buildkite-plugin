@@ -6,10 +6,10 @@ requirements:
   - docker
 configuration:
   properties:
-    globstar:
+    recursive_glob:
       type: boolean
       default: false
-    extglob:
+    extended_glob:
       type: boolean
       default: false
     files:

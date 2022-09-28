@@ -6,24 +6,24 @@ fail() {
   exit 1
 }
 
-# checks if a buildkite variable corresponding to a given shopt is set,
-# and then attempts to set it. Errors will be caught and pushed up through
+# `boolean_check()` runs in a subshell to keep the use
+# of `shopt` constrained from the rest of the script.
+boolean_check() (
+  local value="${1}"
+  shopt -s nocasematch
+
+  # return immediately (and successfully) unless the value is explicitly set to true
+  if [[ ${value} =~ ^(true|1)$ ]]; then
+    return 0
+  fi
+
+  return 1
+)
+
+# Attempts to set a given shopt. Errors will be caught and pushed up through
 # error logging along with a note about the required Bash version number.
 set_shopt() {
   local option="${1}"
-
-  # `tr` is used instead of Bash 4's ^^ (uppercase) and ,, (lowercase)
-  # because evaluating which version of Bash the agent is running only
-  # happens when setting `shopt` values; it leads to clunkier, more
-  # verbose assignments but it should ensure wider compatability in situations
-  # where no `shopt` values need to be set at all.
-  local varname
-  varname="$(tr '[:lower:]' '[:upper:]' <<< "BUILDKITE_PLUGIN_SHELLCHECK_${option}")"
-  local value
-  value="$(tr '[:upper:]' '[:lower:]' <<< "${!varname:-false}")"
-
-  # return immediately (and successfully) unless the value is explicitly set to true
-  [[ ${value} =~ ^(true|1)$ ]] || return 0
 
   # macOS is the last major platform still using Bash 3, and `shopt -q` is
   # broken on macOS. So we have to mute `shopt` the old-fashioned way
@@ -67,8 +67,16 @@ plugin_read_list() {
   fi
 }
 
-set_shopt globstar
-set_shopt extglob
+# Evaluate whether or not the glob behavior modifiers are enabled, and
+# attempt to set the corresponding shopts for them.
+echo "~~~ Checking for glob behavior modifiers"
+if boolean_check "${BUILDKITE_PLUGIN_SHELLCHECK_RECURSIVE_GLOB:-false}"; then
+  set_shopt globstar && echo "Recursive globbing enabled"
+fi
+
+if boolean_check "${BUILDKITE_PLUGIN_SHELLCHECK_EXTENDED_GLOB:-false}"; then
+  set_shopt extglob && echo "Extended globbing enabled"
+fi
 
 IFS=$'\n\t'
 files=()

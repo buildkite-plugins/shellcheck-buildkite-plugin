@@ -23,13 +23,13 @@ The files (or globs) to run shellcheck on.
 
 ### Optional
 
-### `extglob` (boolean)
+### `extended_glob` (boolean)
 
 Enable using [extended glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html), e.g. `*.+(sh|bash)`
 
 Default: `false`
 
-### `globstar` (boolean)
+### `recursive_glob` (boolean)
 
 Enable using recursive globbing, e.g. `**/*.sh`
 
