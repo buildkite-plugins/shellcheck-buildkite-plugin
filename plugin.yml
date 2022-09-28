@@ -6,6 +6,12 @@ requirements:
   - docker
 configuration:
   properties:
+    recursive_glob:
+      type: boolean
+      default: false
+    extended_glob:
+      type: boolean
+      default: false
     files:
       type: [string, array]
       minItems: 1

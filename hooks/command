@@ -1,35 +1,94 @@
 #!/bin/bash
 set -eu -o pipefail
 
+fail() {
+  echo "ERROR: ${*}" 1>&2
+  exit 1
+}
+
+# `boolean_check()` runs in a subshell to keep the use
+# of `shopt` constrained from the rest of the script.
+boolean_check() (
+  local value="${1}"
+  shopt -s nocasematch
+
+  # return immediately (and successfully) if the value is explicitly set to true
+  if [[ ${value} =~ ^(true|1)$ ]]; then
+    return 0
+  fi
+
+  return 1
+)
+
+# Attempts to set a given shopt. Errors will be caught and pushed up through
+# error logging along with a note about the required Bash version number.
+set_shopt() {
+  local option="${1}"
+
+  # macOS is the last major platform still using Bash 3, and `shopt -q` is
+  # broken on macOS. So we have to mute `shopt` the old-fashioned way
+  # and redirect output to /dev/null. Since the list of options that we'll
+  # attempt to set is so constrained, we can use a small helper fuction to look up
+  # which version of bash introduced a given the shopts in our error handling.
+  if ! shopt -s "${option}" &> /dev/null; then
+    fail "failed to set shopt '${option}: $(bash_version_lookup "${option}")"
+  fi
+}
+
+# look up which version of bash introduced
+# a given shopt and print it to stdout.
+bash_version_lookup() {
+  local option="${1}"
+  local required
+
+  case "${option}" in
+    globstar) required="4" ;;
+    extglob) required="2" ;;
+  esac
+
+  echo "shopt '${option}' requires Bash ${required} or newer"
+}
+
 # Reads either a value or a list from plugin config
-function plugin_read_list() {
+plugin_read_list() {
   local prefix="BUILDKITE_PLUGIN_SHELLCHECK_$1"
   local parameter="${prefix}_0"
 
-  if [[ -n "${!parameter:-}" ]]; then
+  if [[ -n ${!parameter:-} ]]; then
     local i=0
     local parameter="${prefix}_${i}"
-    while [[ -n "${!parameter:-}" ]]; do
+    while [[ -n ${!parameter:-} ]]; do
       echo "${!parameter}"
-      i=$((i+1))
+      i=$((i + 1))
       parameter="${prefix}_${i}"
     done
-  elif [[ -n "${!prefix:-}" ]]; then
+  elif [[ -n ${!prefix:-} ]]; then
     echo "${!prefix}"
   fi
 }
+
+# Evaluate whether or not the glob behavior modifiers are enabled, and
+# attempt to set the corresponding shopts for them.
+echo "~~~ Checking for glob behavior modifiers"
+if boolean_check "${BUILDKITE_PLUGIN_SHELLCHECK_RECURSIVE_GLOB:-false}"; then
+  set_shopt globstar && echo "Recursive globbing enabled"
+fi
+
+if boolean_check "${BUILDKITE_PLUGIN_SHELLCHECK_EXTENDED_GLOB:-false}"; then
+  set_shopt extglob && echo "Extended globbing enabled"
+fi
 
 IFS=$'\n\t'
 files=()
 
 # Evaluate all the globs and return the files that exist
-for file in $(plugin_read_list FILES) ; do
-  if [[ -e $file ]] ; then
+for file in $(plugin_read_list FILES); do
+  if [[ -e $file ]]; then
     files+=("$file")
   fi
 done
 
-if [[ -z ${files:-} ]] ; then
+if [[ -z ${files:-} ]]; then
   echo "No files found to shellcheck"
   exit 1
 fi
@@ -38,14 +97,14 @@ fi
 # for pretty online log display (but someone can override this with an
 # explicit `options: "--color=never"`)
 options=("--color=always")
-while IFS=$'\n' read -r option ; do
+while IFS=$'\n' read -r option; do
   options+=("$option")
 done < <(plugin_read_list OPTIONS)
 
 BUILDKITE_PLUGIN_SHELLCHECK_VERSION="${BUILDKITE_PLUGIN_SHELLCHECK_VERSION:-stable}"
 
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "koalaman/shellcheck:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}" ; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "koalaman/shellcheck:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}"; then
   echo "Files are ok ✅"
 else
   exit 1
