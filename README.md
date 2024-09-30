@@ -49,6 +49,12 @@ Version of docker image to use.
 
 Default: `latest`
 
+## `image` (string)
+
+Which shell check image to use.
+
+Default: `koalaman/shellcheck`
+
 ## License
 
 MIT (see [LICENSE](LICENSE))
