@@ -189,3 +189,39 @@ load "${BATS_PLUGIN_PATH}/load.bash"
 
   unstub docker
 }
+
+@test "Shellcheck uses default image when not specified" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="tests/testdata/test.sh"
+  unset BUILDKITE_PLUGIN_SHELLCHECK_IMAGE
+  unset BUILDKITE_PLUGIN_SHELLCHECK_VERSION
+
+  stub docker \
+    "run --rm -v $PWD:/mnt --workdir /mnt koalaman/shellcheck:stable --color=always tests/testdata/test.sh : echo running shellcheck on test.sh"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "Running shellcheck on 1 files"
+  assert_output --partial "running shellcheck on test.sh"
+  assert_output --partial "Files are ok"
+
+  unstub docker
+}
+
+@test "Shellcheck uses default image when specified" {
+  export BUILDKITE_PLUGIN_SHELLCHECK_FILES_0="tests/testdata/test.sh"
+  export BUILDKITE_PLUGIN_SHELLCHECK_IMAGE="foo/shellcheck"
+  export BUILDKITE_PLUGIN_SHELLCHECK_VERSION="bar"
+
+  stub docker \
+    "run --rm -v $PWD:/mnt --workdir /mnt foo/shellcheck:bar --color=always tests/testdata/test.sh : echo running shellcheck on test.sh"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+  assert_output --partial "Running shellcheck on 1 files"
+  assert_output --partial "running shellcheck on test.sh"
+  assert_output --partial "Files are ok"
+
+  unstub docker
+}
