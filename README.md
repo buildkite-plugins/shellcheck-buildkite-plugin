@@ -49,6 +49,20 @@ Version of docker image to use.
 
 Default: `latest`
 
+### `image` (string)
+
+Which shell check image to use.
+
+Default: `koalaman/shellcheck`
+
+## Developing
+
+To run the tests:
+
+```bash
+docker-compose run --rm tests bats tests
+```
+
 ## License
 
 MIT (see [LICENSE](LICENSE))

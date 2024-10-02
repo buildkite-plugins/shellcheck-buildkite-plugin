@@ -102,9 +102,10 @@ while IFS=$'\n' read -r option; do
 done < <(plugin_read_list OPTIONS)
 
 BUILDKITE_PLUGIN_SHELLCHECK_VERSION="${BUILDKITE_PLUGIN_SHELLCHECK_VERSION:-stable}"
+BUILDKITE_PLUGIN_SHELLCHECK_IMAGE="${BUILDKITE_PLUGIN_SHELLCHECK_IMAGE:-koalaman/shellcheck}"
 
 echo "+++ Running shellcheck on ${#files[@]} files"
-if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "koalaman/shellcheck:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}"; then
+if docker run --rm -v "$PWD:/mnt" --workdir "/mnt" "$BUILDKITE_PLUGIN_SHELLCHECK_IMAGE:$BUILDKITE_PLUGIN_SHELLCHECK_VERSION" "${options[@]+${options[@]}}" "${files[@]}"; then
   echo "Files are ok ✅"
 else
   exit 1
