@@ -1,5 +1,5 @@
 services:
   tests:
-    image: buildkite/plugin-tester:v4.1.1
+    image: buildkite/plugin-tester:v4.2.0
     volumes:
       - ".:/plugin"
