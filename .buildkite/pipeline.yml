@@ -1,7 +1,7 @@
 steps:
   - label: run bats tests
     plugins:
-      - plugin-tester#v1.2.0: ~
+      - plugin-tester#v1.3.0: ~
 
   - label: run shellcheck
     plugins:
